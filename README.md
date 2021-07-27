@@ -1,2 +1,0 @@
-# myfirstbot
-Repository for bot
