@@ -30,7 +30,13 @@ def task(link):
     with youtube_dl.YoutubeDL(options) as ydl:
         ydl.download([video_info['webpage_url']])
     audio = open('C:\\Users\\PC\\PycharmProjects\\myfirstbot\\' + format(filename), 'rb')
-    bot.send_audio(link.chat.id, audio)
+
+    # Grab known info from metadata
+    duration = video_info["duration"]
+    title = video_info.get("track", None)
+    artist = video_info.get("artist", None)
+    # Send the audio in response
+    bot.send_audio(link.chat.id, audio, duration=duration, title=title, performer=artist)
     audio.close()
     os.remove("C:\\Users\\PC\\PycharmProjects\\myfirstbot\\" + format(filename))
 
