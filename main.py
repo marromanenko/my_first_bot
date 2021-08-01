@@ -2,7 +2,7 @@ import telebot
 import youtube_dl
 import os
 import sys
-#1814507400:AAEW-lEr3Wqls7HRdwkPDt0cKFoUCn0oxIU
+
 bot = telebot.TeleBot("{}".format(sys.argv[1]), parse_mode=None)
 
 
