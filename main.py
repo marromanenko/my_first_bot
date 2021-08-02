@@ -3,7 +3,16 @@ import youtube_dl
 import os
 import sys
 import re
+
 bot = telebot.TeleBot(sys.argv[1], parse_mode=None)
+
+def replacefunction(somestr):
+    result = ''
+    for i in somestr:
+        if i == '|' or i == '`':
+            i = '#'
+        result += i
+    return result
 
 
 @bot.message_handler(commands=['start', 'help'])
@@ -27,20 +36,20 @@ def task(link):
     )
     filename_tmp = f"{get_valid_filename(video_info['title'])}.dat"
     filename =  f"{get_valid_filename(video_info['title'])}.mp3"
+
     options = {
         'format': 'bestaudio/best',
         'keepvideo': False,
         'outtmpl': filename_tmp,
         'postprocessors': [{
-        'key': 'FFmpegExtractAudio',
-        'preferredcodec': 'mp3',
-        'preferredquality': '320',
-    }],
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3',
+            'preferredquality': '320',
+        }],
     }
     with youtube_dl.YoutubeDL(options) as ydl:
         ydl.download([video_info['webpage_url']])
-    audio = open(filename, 'rb')
-    
+    audio = open(filename, 'rb')    
     # Grab known info from metadata
     duration = video_info["duration"]
     title = video_info.get("track", None)
@@ -49,6 +58,7 @@ def task(link):
     bot.send_audio(link.chat.id, audio, duration=duration, title=title, performer=artist)
     audio.close()
     os.remove(filename)
+
 
 
 bot.polling(none_stop=False, interval=0, timeout=20)
