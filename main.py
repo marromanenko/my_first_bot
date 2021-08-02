@@ -2,9 +2,9 @@ import telebot
 import youtube_dl
 import os
 import sys
+import re
 
-bot = telebot.TeleBot("{}".format(sys.argv[1]), parse_mode=None)
-
+bot = telebot.TeleBot(sys.argv[1], parse_mode=None)
 
 def replacefunction(somestr):
     result = ''
@@ -25,14 +25,18 @@ def send_welcome(message):
     sent = bot.send_message(message.chat.id, "send me your link)")
     bot.register_next_step_handler(sent, task)
 
+def get_valid_filename(s):
+    s = str(s).strip().replace(' ', '_')
+    return re.sub(r'(?u)[^-\w.]', '', s)
 
 def task(link):
     video_url = link.text
     video_info = youtube_dl.YoutubeDL().extract_info(
         url=video_url, download=False
     )
-    filename_tmp = f"{video_info['title']}.dat"
-    filename = f"{video_info['title']}.mp3"
+    filename_tmp = f"{get_valid_filename(video_info['title'])}.dat"
+    filename =  f"{get_valid_filename(video_info['title'])}.mp3"
+
     options = {
         'format': 'bestaudio/best',
         'keepvideo': False,
@@ -43,17 +47,18 @@ def task(link):
             'preferredquality': '320',
         }],
     }
-
     with youtube_dl.YoutubeDL(options) as ydl:
         ydl.download([video_info['webpage_url']])
-    res = replacefunction(format(filename))
-    audio = open('C:\\Users\\PC\\PycharmProjects\\myfirstbot\\' + res, 'rb')
+    audio = open(filename, 'rb')    
+    # Grab known info from metadata
     duration = video_info["duration"]
     title = video_info.get("track", None)
     artist = video_info.get("artist", None)
+    # Send the audio in response
     bot.send_audio(link.chat.id, audio, duration=duration, title=title, performer=artist)
     audio.close()
-    os.remove("C:\\Users\\PC\\PycharmProjects\\myfirstbot\\" + res)
+    os.remove(filename)
+
 
 
 bot.polling(none_stop=False, interval=0, timeout=20)
