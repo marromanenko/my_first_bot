@@ -23,7 +23,7 @@ def send_welcome(message):
     bot.send_message(message.chat.id, "the only thing you need is the URL of the YouTube video you want to extract the audio from. just text /getfile and follow instructions")
 
 
-@bot.message_handler(commands=['getfile'])  #ot reaction to /getfile
+@bot.message_handler(commands=['getfile'])  #bot reaction to /getfile
 def send_welcome(message):
     sent = bot.send_message(message.chat.id, "send me your link)")
     bot.register_next_step_handler(sent, filecreation)
