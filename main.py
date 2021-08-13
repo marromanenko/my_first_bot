@@ -12,7 +12,7 @@ except IndexError:
 def replacefunction(somestr):  #Python does not read some characters and replaces them with a #, we do it right away, so that later we can find the correct file name
     result = ''
     for i in somestr:
-        if i == '|' or i == '`':
+        if i == '|' or i == '`' or i == '"':
             i = '#'
         result += i
     return result
